@@ -188,7 +188,7 @@ tools:
 
   toml-to-yaml:
     title: TOML 到 YAML
-    description: Parse and convert TOML to YAML.
+    description: 解析 TOML 并将其转换为 YAML。
 
   math-evaluator:
     title: 数学计算器
