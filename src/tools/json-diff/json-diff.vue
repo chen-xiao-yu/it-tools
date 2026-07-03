@@ -11,10 +11,27 @@ const rawRightJson = ref('');
 const leftJson = computed(() => withDefaultOnError(() => JSON5.parse(rawLeftJson.value), undefined));
 const rightJson = computed(() => withDefaultOnError(() => JSON5.parse(rawRightJson.value), undefined));
 
+function getJsonError(value: string) {
+  if (value.trim() === '') return '';
+  try {
+    JSON5.parse(value);
+    return '';
+  }
+  catch (e: any) {
+    const line = e.lineNumber;
+    const col = e.columnNumber;
+    if (line && col) {
+      return `第 ${line} 行，第 ${col} 列：${e.message.replace('JSON5: ', '')}`;
+    }
+    return e.message || '未知解析错误';
+  }
+}
+
 const jsonValidationRules = [
   {
     validator: (value: string) => value === '' || isNotThrowing(() => JSON5.parse(value)),
-    message: 'Invalid JSON format',
+    getErrorMessage: (value: string) => getJsonError(value),
+    message: '提供的 JSON 格式不正确：{0}',
   },
 ];
 </script>

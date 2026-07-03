@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatXml, isValidXML } from './xml-formatter.service';
+import { formatXml, isValidXML, getXmlError } from './xml-formatter.service';
 import type { UseValidationRule } from '@/composable/validation';
 
 const defaultValue = '<hello><world>foo</world><world>bar</world></hello>';
@@ -17,7 +17,8 @@ function transformer(value: string) {
 const rules: UseValidationRule<string>[] = [
   {
     validator: isValidXML,
-    message: 'Provided XML is not valid.',
+    getErrorMessage: (v: string) => getXmlError(v),
+    message: '提供的 XML 格式不正确：{0}',
   },
 ];
 </script>

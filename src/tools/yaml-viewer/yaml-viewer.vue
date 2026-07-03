@@ -19,7 +19,17 @@ const rawYamlValidation = useValidation({
   rules: [
     {
       validator: v => v === '' || yaml.parse(v),
-      message: 'Provided YAML is not valid.',
+      getErrorMessage: (v) => {
+        if (v.trim() === '') return '';
+        try { yaml.parse(v); return ''; }
+        catch (e: any) {
+          if (e.linePos?.[0]) {
+            return `第 ${e.linePos[0].line} 行，第 ${e.linePos[0].col} 列：${e.message}`;
+          }
+          return e.message || '未知解析错误';
+        }
+      },
+      message: '提供的 YAML 格式不正确：{0}',
     },
   ],
 });

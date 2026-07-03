@@ -9,7 +9,19 @@ const transformer = (value: string) => withDefaultOnError(() => JSON.stringify(J
 const rules: UseValidationRule<string>[] = [
   {
     validator: (v: string) => v === '' || JSON5.parse(v),
-    message: 'Provided JSON is not valid.',
+    getErrorMessage: (v: string) => {
+      if (v.trim() === '') return '';
+      try { JSON5.parse(v); return ''; }
+      catch (e: any) {
+        const line = e.lineNumber;
+        const col = e.columnNumber;
+        if (line && col) {
+          return `第 ${line} 行，第 ${col} 列：${e.message.replace('JSON5: ', '')}`;
+        }
+        return e.message || '未知解析错误';
+      }
+    },
+    message: '提供的 JSON 格式不正确：{0}',
   },
 ];
 </script>
